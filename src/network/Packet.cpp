@@ -11,10 +11,10 @@
 
 // could do a uint8_t but i want to have errors
 uint8_t Packet::readByte(){
-    this->tracker++;
     if(this->tracker >= vec.size()){
         return 0; // we should kick the client here
     }
+    this->tracker++;
     return vec[this->tracker - 1];
 }
 
