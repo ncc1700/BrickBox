@@ -10,9 +10,9 @@
 #include <stdint.h>
 
 
-
-uint64_t htonll(uint64_t n);
-
+namespace Network {
+    uint64_t htonll(uint64_t n);
+}   
 
 
 

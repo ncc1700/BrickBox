@@ -9,4 +9,7 @@ add_executable(BrickBox src/main.cpp
                 src/network/Connection.cpp
                 src/network/Packet.cpp
                 src/network/NetworkTools.cpp
+                src/network/PacketReceiver.cpp
+                src/network/PacketSender.cpp
+                src/network/protocol/1.21.11/ProtCallbacks.cpp
                 src/network/protocol/1.21.11/MCProtocol.cpp)
