@@ -3,10 +3,13 @@
 #include <memory>
 #include <sys/types.h>
 #include "../../PacketSender.h"
+
+
+
 namespace Network {
     namespace MCProtocol {
         // initial packets for logging in
-        void HandShake(Connection *con, std::string ip, uint16_t port){
+        void handShake(Connection *con, std::string ip, uint16_t port){
             printf("handshake\n");
             Packet packet;
             packet.writeVarInt(0x00);
@@ -16,8 +19,8 @@ namespace Network {
             packet.writeVarInt(2);
             PacketSender::send(std::make_shared<Packet>(packet));
         }
-        void LoginStart(Connection *con, std::string name, std::string uuid){
-             printf("login start\n");
+        void loginStart(Connection *con, std::string name, std::string uuid){
+            printf("login start\n");
             Packet packet;
             packet.writeVarInt(0x00);
             packet.writeString(name, 16);
@@ -25,7 +28,7 @@ namespace Network {
             packet.writeU64(0);
             PacketSender::send(std::make_shared<Packet>(packet));
         }
-        void LoginAcknowledged(Connection* con){
+        void loginAcknowledged(Connection* con){
             printf("login acknowledged\n");
             Packet packet;
             packet.writeVarInt(0x03);
