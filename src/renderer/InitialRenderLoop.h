@@ -6,7 +6,7 @@
 #define BRICKBOX_INITIALRENDERLOOP_H
 #include "AbstractRenderer.h"
 #include "opengl/Buffer.h"
-#include "opengl/Program.h"
+#include "opengl/programs/TestProgram.h"
 #include "opengl/VertexArray.h"
 
 class InitialRenderLoop : public AbstractRenderer {
@@ -15,10 +15,9 @@ public:
     ~InitialRenderLoop() override = default;
     void loop() override;
 private:
-    Program testProgram;
+    TestProgram testProgram;
     VertexArray testVAO;
     Buffer vertexBuffer;
-    GLuint va_position;
 };
 
 

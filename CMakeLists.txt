@@ -20,8 +20,7 @@ add_executable(BrickBox src/main.cpp
         src/renderer/opengl/Shader.cpp
         src/renderer/opengl/Program.cpp
         src/renderer/opengl/Buffer.cpp
-        src/renderer/opengl/Buffer.h
         src/renderer/opengl/VertexArray.cpp
-        src/renderer/opengl/VertexArray.h
+        src/renderer/opengl/programs/TestProgram.h
 )
 target_link_libraries(BrickBox glfw PkgConfig::epoxy)

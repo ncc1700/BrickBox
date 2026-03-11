@@ -52,6 +52,10 @@ void Program::use() const {
     glUseProgram(id);
 }
 
+Program::Attribute Program::getAttribute(const char *name, const GLint size) const {
+    return {getAttributeLocation(name), size};
+}
+
 Program::~Program() {
     if (id != 0) glDeleteProgram(id);
 }
