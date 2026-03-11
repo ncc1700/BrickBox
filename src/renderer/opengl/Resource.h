@@ -15,8 +15,10 @@ class Resource {
 public:
     Resource();
     Resource(Resource const& other) = delete;
+    Resource(Resource &&other) = delete;
     virtual ~Resource();
 #ifdef DEBUG_RESOURCE_ALLOCATION
+private:
     GLFWwindow* window;
 #endif
 };
