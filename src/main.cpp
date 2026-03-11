@@ -16,7 +16,7 @@ int main(){
     Network::PacketSender::create(con);
     Network::PacketReceiver::create(con);
     Network::MCProtocol::handShake(con.get(), "127.0.0.1", 48472);
-    Network::MCProtocol::loginStart(con.get(), "Test", "123e4567-e89b-12d3-a456-426614174000");    
+    Network::MCProtocol::loginStart(con.get(), "BrickBox", "123e4567-e89b-12d3-a456-426614174000");    
     
     // the rest is done via the callbacks
     while(1){continue;}

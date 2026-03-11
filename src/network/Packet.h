@@ -19,6 +19,8 @@ namespace Network {
         private:
             uint64_t tracker = 0;
         public:
+            uint64_t getTracker();
+            void setTracker(uint64_t value);
             std::vector<uint8_t> vec;
             uint8_t readByte();
             ssize_t writeByte(uint8_t byte);
@@ -35,8 +37,10 @@ namespace Network {
             double readDouble();
             ssize_t writeDouble(double num);
             int readVarInt();
+            int64_t readVarLong();
             int sizeVarInt(int value);
             void writeVarInt(int value);
+            void writeVarLong(int64_t value);;
             uint8_t* readBuffer();
             char* readCStr();
             std::string readString(); // <---- USE THIS, NOT READCSTR

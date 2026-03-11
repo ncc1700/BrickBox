@@ -39,6 +39,7 @@ namespace Network {
             int readVarInt();
             int sizeVarInt(int value);
             void writeVarInt(int value);
+            void writeVarLong(int64_t value);
             char* readBuffer();
             char* readCStr();
             std::string readString(); // <---- USE THIS

@@ -38,6 +38,7 @@ namespace Network {
                 std::this_thread::sleep_for(std::chrono::milliseconds(10));
                 continue;
             }
+            printf("sending a packet! (queue line: %ld)\n", this->packetQueue.size());
             this->packetQueue.front()->sendPacket(this->con.get());
             this->packetQueue.pop();
             this->mutex.unlock();

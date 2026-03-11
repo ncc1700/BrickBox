@@ -34,6 +34,13 @@ namespace Network {
             packet.writeVarInt(0x03);
             PacketSender::send(std::make_shared<Packet>(packet));
         }
+        void clientKeepAlive(Connection* con, int64_t id){
+            printf("sending that we are alive\n");
+            Packet packet;
+            packet.writeVarInt(0x04);
+            packet.writeU64(id);
+            PacketSender::send(std::make_shared<Packet>(packet));
+        }
     }
 
 

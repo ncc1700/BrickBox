@@ -133,10 +133,10 @@ namespace Network {
                 | ((uint64_t)recv_buffer[1] << 48)
                 | ((uint64_t)recv_buffer[2] << 40)
                 | ((uint64_t)recv_buffer[3] << 32)
-                | ((uint32_t)recv_buffer[4] << 24) 
-                | ((uint32_t)recv_buffer[5] << 16)
-                | ((uint32_t)recv_buffer[6] << 8)
-                | ((uint32_t)recv_buffer[7]);
+                | ((uint64_t)recv_buffer[4] << 24) 
+                | ((uint64_t)recv_buffer[5] << 16)
+                | ((uint64_t)recv_buffer[6] << 8)
+                | ((uint64_t)recv_buffer[7]);
     }
 
     ssize_t Connection::writeU64(uint64_t num){
@@ -214,6 +214,16 @@ namespace Network {
         }
     }
 
+    void Connection::writeVarLong(int64_t value){
+        while(true){
+            if((value & ~SEGMENT_BIT) == 0){
+                this->writeByte(value);
+                return;
+            }
+            this->writeByte((value & SEGMENT_BIT) | CONTINUE_BIT);
+            value >>= 7;
+        }
+    }
     char* Connection::readBuffer(){
         uint32_t length = this->readVarInt();
         

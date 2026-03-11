@@ -7,6 +7,12 @@
 
 
 namespace Network {
+    uint64_t Packet::getTracker(){
+        return this->tracker;
+    }
+    void Packet::setTracker(uint64_t value){
+        this->tracker = value;
+    }
     // could do a uint8_t but i want to have errors
     uint8_t Packet::readByte(){
         if(this->tracker >= vec.size()){
@@ -68,10 +74,10 @@ namespace Network {
                 | ((uint64_t)buffer[1] << 48)
                 | ((uint64_t)buffer[2] << 40)
                 | ((uint64_t)buffer[3] << 32)
-                | ((uint32_t)buffer[4] << 24) 
-                | ((uint32_t)buffer[5] << 16)
-                | ((uint32_t)buffer[6] << 8)
-                | ((uint32_t)buffer[7]);
+                | ((uint64_t)buffer[4] << 24) 
+                | ((uint64_t)buffer[5] << 16)
+                | ((uint64_t)buffer[6] << 8)
+                | ((uint64_t)buffer[7]);
     }
 
     ssize_t Packet::writeU64(uint64_t num){
@@ -130,6 +136,27 @@ namespace Network {
         return value;
     }
 
+    int64_t Packet::readVarLong(){
+        int64_t value = 0;
+        int64_t position = 0;
+        uint8_t byte = 0;
+
+        while(1){
+            int byteInt = this->readByte();
+            byte = (uint8_t)byteInt;
+            value |= (byte & SEGMENT_BIT) << position;
+            if((byte & CONTINUE_BIT) == 0) {
+                break;
+            }
+            position += 7;
+            if(position >= 64){
+                // something went wrong
+                return -1;
+            }
+        }
+        return value;
+    }
+
     int Packet::sizeVarInt(int value){
         int size = 1;
         while((value & ~SEGMENT_BIT) != 0){
@@ -140,6 +167,17 @@ namespace Network {
     }
 
     void Packet::writeVarInt(int value){
+        while(true){
+            if((value & ~SEGMENT_BIT) == 0){
+                this->writeByte(value);
+                return;
+            }
+            this->writeByte((value & SEGMENT_BIT) | CONTINUE_BIT);
+            value >>= 7;
+        }
+    }
+
+    void Packet::writeVarLong(int64_t value){
         while(true){
             if((value & ~SEGMENT_BIT) == 0){
                 this->writeByte(value);
