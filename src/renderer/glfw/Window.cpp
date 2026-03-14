@@ -15,7 +15,7 @@ Window::Window() {
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    window = glfwCreateWindow(640, 480, "BrickBox", nullptr, nullptr);
+    window = glfwCreateWindow(1024, 1024, "BrickBox", nullptr, nullptr);
 }
 
 Window::~Window() {

@@ -56,6 +56,10 @@ Program::Attribute Program::getAttribute(const char *name, const GLint size) con
     return {getAttributeLocation(name), size};
 }
 
+Program::Uniform Program::getUniform(const char *name) const {
+    return {getUniformLocation(name)};
+}
+
 Program::~Program() {
     if (id != 0) glDeleteProgram(id);
 }

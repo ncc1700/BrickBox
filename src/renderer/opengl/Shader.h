@@ -4,6 +4,8 @@
 
 #ifndef BRICKBOX_SHADER_H
 #define BRICKBOX_SHADER_H
+#include <optional>
+
 #include "Resource.h"
 #include <string>
 

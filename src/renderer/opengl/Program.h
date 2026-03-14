@@ -17,6 +17,9 @@ public:
         const GLint index;
         const GLint size;
     };
+    struct Uniform {
+        const GLint index;
+    };
 
     explicit Program(const char* debug_name, std::initializer_list<Shader> shaders);
     ~Program() override;
@@ -24,6 +27,7 @@ public:
     void use() const;
 protected:
     Attribute getAttribute(const char* name, GLint size) const;
+    Uniform getUniform(const char* name) const;
 private:
     GLint getUniformLocation(const char* name) const;
     GLint getAttributeLocation(const char* name) const;

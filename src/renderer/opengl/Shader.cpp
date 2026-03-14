@@ -8,29 +8,12 @@
 
 #include <cmath>
 #include <iostream>
-#include <filesystem>
-#include <cstdio>
-#include <cstring>
 
-// TODO move this somewhere else
+#include "../../Filesystem.h"
+
 static std::string readShaderFromFile(const char* file_name) {
-    FILE *fp = fopen(file_name, "r");
-    if (!fp) {
-        std::cout << "Failed to open " << file_name << ": " << strerror(errno) << std::endl;
-        return "";
-    }
-    fseek(fp, 0, SEEK_END);
-    const size_t length = ftell(fp);
-    fseek(fp, 0, SEEK_SET);
-    std::string shaderContent;
-    shaderContent.resize(length);
-    if (fread(shaderContent.data(), sizeof(char), length, fp) != length) {
-        std::cout << "Failed to read " << file_name << ": " << strerror(errno) << std::endl;
-        fclose(fp);
-        return "";
-    }
-    fclose(fp);
-    return shaderContent;
+    if (auto shaderContent = Filesystem::readAsString(file_name); shaderContent.has_value()) return shaderContent.value();
+    return "";
 }
 
 Shader::Shader(const GLuint type, const char *file_name) : Shader (type, readShaderFromFile(file_name), file_name) {}

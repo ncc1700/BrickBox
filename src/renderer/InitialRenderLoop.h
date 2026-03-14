@@ -5,6 +5,7 @@
 #ifndef BRICKBOX_INITIALRENDERLOOP_H
 #define BRICKBOX_INITIALRENDERLOOP_H
 #include "AbstractRenderer.h"
+#include "assets/RenderableAssets.h"
 #include "opengl/Buffer.h"
 #include "opengl/programs/TestProgram.h"
 #include "opengl/VertexArray.h"
@@ -18,6 +19,7 @@ private:
     TestProgram testProgram;
     VertexArray testVAO;
     Buffer vertexBuffer;
+    RenderableAssets assets;
 };
 
 

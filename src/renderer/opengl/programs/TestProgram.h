@@ -14,7 +14,8 @@ public:
         Shader(GL_FRAGMENT_SHADER, "test.frag")
     }) {};
     Attribute position = getAttribute("position", 2);
-    Attribute color = getAttribute("color", 3);
+    Attribute uv = getAttribute("uv", 2);
+    Uniform sampler = getUniform("tex_sampler");
 
 };
 
