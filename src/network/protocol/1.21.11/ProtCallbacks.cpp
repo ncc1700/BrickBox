@@ -123,10 +123,13 @@ namespace Network {
         }
         static int8_t setCenterChunk(std::shared_ptr<Connection> con, std::shared_ptr<Packet> packet){
             printf("STUB: %s\n", __FUNCTION__);
+            printf("center chunk x: %d, center chunk y: %d\n", packet->readVarInt(), packet->readVarInt());
             return 0;
         }
         static int8_t chunkDataAndUpdateLight(std::shared_ptr<Connection> con, std::shared_ptr<Packet> packet){
             printf("for artdev, chunkdata and light\n");
+            // inital parsing
+            printf("chunk x: %d, chunk z: %d\n", packet->readU32(), packet->readU32());
             // ok heres ya data, you can see whats sent via
             // https://minecraft.wiki/w/Java_Edition_protocol/Packets#Chunk_Data_and_Update_Light
 
