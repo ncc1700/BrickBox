@@ -30,6 +30,7 @@ public:
     ~VertexArray() override;
     void use() const;
     void addArray(const Buffer &buffer, const std::initializer_list<Member> &members) const;
+    void setElementBuffer(const Buffer& buffer) const;
 private:
     const GLuint id;
 };

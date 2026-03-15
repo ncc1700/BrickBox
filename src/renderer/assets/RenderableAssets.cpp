@@ -8,7 +8,7 @@
 
 RenderableAssets::RenderableAssets() {
     AtlasStitcher stitcher;
-    stitcher.addSourceDir("textures/block");
+    stitcher.addResources("minecraft:block/");
     stitcher.stitch();
     blockAtlas = stitcher.generateResource(blockTextures);
 }

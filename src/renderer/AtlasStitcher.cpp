@@ -21,7 +21,7 @@ static bool str_ends_with(const std::string &str1, const std::string &str2) {
     return str1_tail == str2;
 }
 
-AtlasStitcher::Rect::Rect(const rect_type &rect_, std::string name) : rect(rect_), path(std::move(name)) {}
+AtlasStitcher::Rect::Rect(const rect_type &rect_, std::string path, std::string name) : rect(rect_), path(std::move(path)), name(std::move(name)) {}
 
 auto &AtlasStitcher::Rect::get_rect() {
     return rect;
@@ -39,12 +39,13 @@ static unsigned int round_pow2(unsigned int v) {
     return v;
 }
 
-void AtlasStitcher::addSourceDir(const std::string &dir) {
-    Filesystem::iterateFilePaths(dir, [this](const std::string &file_path) {
-        if (!str_ends_with(file_path, ".png")) return;
+void AtlasStitcher::addResources(const std::string &path) {
+    const std::string dir = Filesystem::fromNamespacedPath(path, Filesystem::AssetTypes.TEXTURE, false);
+    Filesystem::iterateFilePaths(dir, [this, path](const std::string &file_path, const std::string &file_name) {
+        if (str_ends_with(file_path, ".mcmeta")) return;
         int w, h, c;
         if (stbi_info(file_path.c_str(), &w, &h, &c)) {
-            stitch_entries.emplace_front(rect_type(0, 0, w, h), file_path);
+            stitch_entries.emplace_front(rect_type(0, 0, w, h), file_path, path + Filesystem::removeExtension(file_name));
             //std::cout << "Added " << w << "x" << h << " at " << file_path << " to stitch queue" << std::endl;
         } else {
             std::cout << "Not including "<< file_path << " because stbi_info failed" << std::endl;
@@ -77,7 +78,7 @@ void AtlasStitcher::stitch() {
     }
 }
 
-std::unique_ptr<Texture> AtlasStitcher::generateResource(std::unordered_map<std::string, TextureRef> &refs) {
+std::unique_ptr<Texture> AtlasStitcher::generateResource(std::unordered_map<std::string, const TextureRef> &refs) {
     if (!successful || (size.w == 0 || size.h == 0)) {
         std::cout << "Did not generate atlas resource: nothing to generate" << std::endl;
     }
@@ -91,14 +92,13 @@ std::unique_ptr<Texture> AtlasStitcher::generateResource(std::unordered_map<std:
         }
         const auto& rect = entry.get_rect();
         if (x != rect.w || y != rect.h) {
-            std::cout << "Texture " << entry.path << " doesn't have the same size" << std::endl;
+            std::cout << "Texture " << entry.name << " doesn't have the same size" << std::endl;
             continue;
         }
         atlas->upload(rect.x, rect.y, rect.w, rect.h, GL_RGBA, GL_UNSIGNED_BYTE, tex_content);
         free(tex_content);
-        const auto atlas_key = Filesystem::removeExtension(Filesystem::fileName(entry.path));
+        const auto atlas_key = entry.name;
         refs.emplace(atlas_key, TextureRef(*atlas, rect.x, rect.y, rect.w, rect.h));
-        //std::cout << "Loaded " << atlas_key << std::endl;
     }
     return std::move(atlas);
 }

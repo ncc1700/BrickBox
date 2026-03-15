@@ -26,11 +26,13 @@ add_executable(BrickBox src/main.cpp
         src/renderer/AtlasStitcher.cpp
         include/nlohmann/json.hpp
         src/Filesystem.cpp
-        src/assets/BlockModel.cpp
+        src/renderer/assets/BlockModel.cpp
         src/assets/STBImage.cpp
         src/renderer/assets/RenderableAssets.cpp
         src/renderer/assets/RenderableAssets.h
         src/renderer/assets/TextureRef.h
+        src/assets/BlockModelLoader.cpp
+        src/assets/BlockModelLoader.h
 )
 
 target_include_directories(BrickBox PRIVATE include)

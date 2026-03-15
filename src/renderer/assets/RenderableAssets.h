@@ -17,7 +17,7 @@ class RenderableAssets : public Resource {
 public:
     RenderableAssets();
     std::unique_ptr<Texture> blockAtlas;
-    std::unordered_map<std::string, TextureRef> blockTextures;
+    std::unordered_map<std::string, const TextureRef> blockTextures;
 private:
 };
 

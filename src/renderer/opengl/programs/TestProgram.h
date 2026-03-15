@@ -13,9 +13,10 @@ public:
         Shader(GL_VERTEX_SHADER, "test.vert"),
         Shader(GL_FRAGMENT_SHADER, "test.frag")
     }) {};
-    Attribute position = getAttribute("position", 2);
+    Attribute position = getAttribute("position", 3);
     Attribute uv = getAttribute("uv", 2);
     Uniform sampler = getUniform("tex_sampler");
+    Uniform transform = getUniform("transform");
 
 };
 

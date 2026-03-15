@@ -10,6 +10,15 @@
 #include <sstream>
 #include <algorithm>
 #include <iostream>
+#include <utility>
+
+const std::string Filesystem::defaultNamespace = "minecraft";
+
+const Filesystem::AssetTypes_ Filesystem::AssetTypes = {
+    .MODEL = {"models", ".json"},
+    .TEXTURE = {"textures", ".png"}
+};
+
 
 std::optional<std::unique_ptr<std::istream>> Filesystem::open(const std::string &path) {
     if (auto ifstream = std::make_unique<std::ifstream>(path); ifstream->is_open()) return ifstream;
@@ -68,6 +77,15 @@ bool Filesystem::iterateFilePaths(const std::string &path, const std::function<v
     return true;
 }
 
+bool Filesystem::iterateFilePaths(const std::string &path, const std::function<void(std::string, std::string)> &on_file) {
+    const std::filesystem::path fspath(path);
+    for (const auto& dir : std::filesystem::directory_iterator(fspath)) {
+        if (!dir.is_regular_file()) continue;
+        on_file(dir.path().string(), dir.path().filename());
+    }
+    return true;
+}
+
 std::string Filesystem::fileName(const std::string &path) {
     const auto length = path.length();
     auto last_slash = path.find_last_of('/');
@@ -84,4 +102,21 @@ std::string Filesystem::removeExtension(const std::string &name) {
     const auto last_dot = name.find_last_of('.');
     if (last_dot == std::string::npos) return name;
     return name.substr(0, last_dot);
+}
+
+std::string Filesystem::fromNamespacedPath(const std::string &path, const AssetType &asset_type, const bool withExtension) {
+    const auto namespace_separator = path.find_first_of(':');
+    std::string _namespace = defaultNamespace;
+    std::string adjusted_path = path;
+    if (namespace_separator != std::string::npos) {
+        _namespace = path.substr(0, namespace_separator);
+        adjusted_path = path.substr(namespace_separator + 1);
+    }
+    return _namespace + "/" + asset_type.directory + "/" + adjusted_path + (withExtension ? asset_type.file_extension : "");
+}
+
+
+std::string Filesystem::defaultify(const std::string &path) {
+    if (path.find_first_of(':') != std::string::npos) return path;
+    return defaultNamespace + ":" + path;
 }

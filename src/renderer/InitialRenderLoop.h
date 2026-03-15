@@ -16,9 +16,10 @@ public:
     ~InitialRenderLoop() override = default;
     void loop() override;
 private:
+    GLuint elem_count;
     TestProgram testProgram;
     VertexArray testVAO;
-    Buffer vertexBuffer;
+    Buffer vertexBuffer, indexBuffer;
     RenderableAssets assets;
 };
 

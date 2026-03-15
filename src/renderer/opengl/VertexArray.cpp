@@ -26,6 +26,11 @@ void VertexArray::addArray(const Buffer &buffer, const std::initializer_list<Mem
     }
 }
 
+void VertexArray::setElementBuffer(const Buffer &buffer) const {
+    if (id != current_vertex_array) use();
+    buffer.bind(GL_ELEMENT_ARRAY_BUFFER);
+}
+
 void VertexArray::use() const {
     if (id != current_vertex_array) {
         glBindVertexArray(id);
