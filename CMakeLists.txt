@@ -12,4 +12,14 @@ add_executable(BrickBox src/main.cpp
                 src/network/PacketReceiver.cpp
                 src/network/PacketSender.cpp
                 src/network/protocol/1.21.11/ProtCallbacks.cpp
-                src/network/protocol/1.21.11/MCProtocol.cpp)
+                src/network/protocol/MCProtocol.cpp
+                src/network/protocol/1.21.11/client/CInitPackets.cpp
+                src/network/protocol/1.21.11/client/CConfigPackets.cpp
+                src/network/protocol/1.21.11/client/CSyncPackets.cpp
+                src/network/protocol/1.21.11/server/SInitPackets.cpp
+                src/network/protocol/1.21.11/server/SConfigPackets.cpp
+                src/network/protocol/1.21.11/server/SSyncPackets.cpp
+                src/network/protocol/1.21.11/server/SEventPackets.cpp
+                src/network/protocol/1.21.11/server/SMiscPackets.cpp
+
+                src/network/AbstractFormat.cpp)

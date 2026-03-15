@@ -1,15 +1,13 @@
-#include "../MCProtocol.h"
-#include "../../Packet.h"
 #include <memory>
 #include <sys/types.h>
-#include "../../PacketSender.h"
-
+#include "../../../PacketSender.h"
+#include "../../ClientPackets.h"
 
 
 namespace Network {
-    namespace MCProtocol {
+    namespace ClientPackets {
         // initial packets for logging in
-        void handShake(Connection *con, std::string ip, uint16_t port){
+        void handShake(std::shared_ptr<Connection> con, std::string ip, uint16_t port){
             printf("handshake\n");
             Packet packet;
             packet.writeVarInt(0x00);
@@ -19,7 +17,7 @@ namespace Network {
             packet.writeVarInt(2);
             PacketSender::send(std::make_shared<Packet>(packet));
         }
-        void loginStart(Connection *con, std::string name, std::string uuid){
+        void loginStart(std::shared_ptr<Connection> con, std::string name, std::string uuid){
             printf("login start\n");
             Packet packet;
             packet.writeVarInt(0x00);
@@ -28,17 +26,17 @@ namespace Network {
             packet.writeU64(0);
             PacketSender::send(std::make_shared<Packet>(packet));
         }
-        void loginAcknowledged(Connection* con){
+        void loginAcknowledged(std::shared_ptr<Connection> con){
             printf("login acknowledged\n");
             Packet packet;
             packet.writeVarInt(0x03);
             PacketSender::send(std::make_shared<Packet>(packet));
         }
-        void clientKeepAlive(Connection* con, int64_t id){
-            printf("sending that we are alive\n");
+
+        void playerLoaded(std::shared_ptr<Connection> con){
+            printf("sending that initialization is successful and we can play!\n");
             Packet packet;
-            packet.writeVarInt(0x04);
-            packet.writeU64(id);
+            packet.writeVarInt(0x2B);
             PacketSender::send(std::make_shared<Packet>(packet));
         }
     }

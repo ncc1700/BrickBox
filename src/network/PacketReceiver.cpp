@@ -2,10 +2,8 @@
 #include "Connection.h"
 #include "protocol/MCProtocol.h"
 #include "PacketReceiver.h"
-#include <chrono>
 #include <cstddef>
 #include <memory>
-#include <queue>
 #include <thread>
 
 
@@ -42,7 +40,7 @@ namespace Network {
             }
             int id = packet.readVarInt();
             printf("we got a packet! Id is 0x%x Size is %d\n", id, packetSize);
-            MCProtocol::handleCallback(con, std::make_shared<Packet>(packet), id);   
+            handleCallback(con, std::make_shared<Packet>(packet), id);   
         }
     }
     void PacketReceiver::create(std::shared_ptr<Connection> con){

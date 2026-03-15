@@ -12,11 +12,11 @@ int main(){
     std::shared_ptr<Network::Connection> con = std::make_shared<Network::Connection>();
 
     con->connectToServer("0.0.0.0", 25565);
-    Network::MCProtocol::registerCallbacks();
+    Network::registerCallbacks();
     Network::PacketSender::create(con);
     Network::PacketReceiver::create(con);
-    Network::MCProtocol::handShake(con.get(), "127.0.0.1", 48472);
-    Network::MCProtocol::loginStart(con.get(), "BrickBox", "123e4567-e89b-12d3-a456-426614174000");    
+    Network::ClientPackets::handShake(con, "127.0.0.1", 48472);
+    Network::ClientPackets::loginStart(con, "BrickBox", "123e4567-e89b-12d3-a456-426614174000");    
     
     // the rest is done via the callbacks
     while(1){continue;}
