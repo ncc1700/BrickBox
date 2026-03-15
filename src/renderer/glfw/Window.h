@@ -6,6 +6,7 @@
 #define BRICKBOX_GLFWWINDOW_H
 #include <memory>
 #include <GLFW/glfw3.h>
+#include <glm/vec2.hpp>
 #include "../AbstractRenderer.h"
 
 class Window {
@@ -14,9 +15,13 @@ public:
     ~Window();
     void loop();
     void setRenderer(std::unique_ptr<AbstractRenderer> &&render_loop);
-private:
-    std::unique_ptr<AbstractRenderer> renderLoop;
+    glm::vec2 getCursorDelta();
     GLFWwindow *window;
+private:
+    bool mouseEnabled;
+    std::unique_ptr<AbstractRenderer> renderLoop;
+    void setGrab(bool grabbing);
+    static void keyPressCallback(GLFWwindow* win, int key, int scancode, int action, int mods);
 };
 
 

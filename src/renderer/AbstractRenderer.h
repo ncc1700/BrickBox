@@ -13,7 +13,7 @@ public:
     virtual ~AbstractRenderer() = default;
     virtual void loop() = 0;
 protected:
-    const Window& parent;
+    Window& parent;
 };
 
 #endif //BRICKBOX_ABSTRACTRENDERLOOP_H

@@ -12,18 +12,25 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/ext/matrix_transform.hpp>
 
+
 #include "../assets/BlockModelLoader.h"
+#include "glfw/Window.h"
+#include <glm/gtc/matrix_transform.hpp>
 
 typedef struct {
     float position[3];
     unsigned int uv[2];
 } triangle_vattr;
 
-InitialRenderLoop::InitialRenderLoop(Window& window) : AbstractRenderer(window)
+InitialRenderLoop::InitialRenderLoop(Window& window) : AbstractRenderer(window), translate(1.0f), rotate(1.0f), scale(1.0f), projection(1.0f)
 {
+    projection = glm::perspective(45.0f, 1.0f, 0.01f, 0.95f);
+    scale = glm::scale(scale, glm::vec3(0.007f));
+    translate = glm::translate(translate, glm::vec3(0.0f, 0.0f, -64.0f));
+
 
     BlockModelLoader loader(assets.blockTextures);
-    BlockModel blockModel = loader.loadModel("minecraft:block/comparator_on_subtract");
+    BlockModel blockModel = loader.loadModel("minecraft:block/anvil");
     std::cout << "Faces: " << blockModel.faces.size() << std::endl;
 
     const TextureRef& heavy_core = assets.blockTextures.at("minecraft:block/grass_block_side");
@@ -71,11 +78,11 @@ InitialRenderLoop::InitialRenderLoop(Window& window) : AbstractRenderer(window)
     atlas_tex.setTMU(0);
     glUniform1i(testProgram.sampler.index, 0);
 
-    constexpr glm::vec3 rotate(1.0f, 1.0f, 0.0f);
-    glm::mat4x4 transform = glm::identity<glm::mat4x4>();
-    //glm::mat4x4 transform = glm::rotate(glm::identity<glm::mat4x4>(), glm::radians(30.0f), rotate);
-    //transform = glm::translate(transform, glm::vec3(0.5, 0, -0.5));
-    glUniformMatrix4fv(testProgram.transform.index, 1, GL_FALSE, glm::value_ptr(transform));
+    glUniformMatrix4fv(testProgram.projection.index, 1, GL_FALSE, glm::value_ptr(projection));
+    glUniformMatrix4fv(testProgram.transform.index, 1, GL_FALSE, glm::value_ptr(scale * translate));
+
+    //glm::mat4 ident = glm::identity<glm::mat4>();
+    //glUniformMatrix4fv(testProgram.transform.index, 1, GL_FALSE, glm::value_ptr(ident));
 
     testVAO.use();
 
@@ -83,12 +90,53 @@ InitialRenderLoop::InitialRenderLoop(Window& window) : AbstractRenderer(window)
 
 
     glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
-    glClearDepth(0.5f);
+    glClearDepth(1.0f);
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+}
+
+void InitialRenderLoop::move(const glm::vec3 &dir) {
+    translate = glm::translate(translate, xyz(glm::inverse(rotate) * glm::vec4(dir.x, dir.y, dir.z, 1.0f)));
 }
 
 void InitialRenderLoop::loop() {
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
+    const glm::vec2 mousevec = parent.getCursorDelta();
+    bool mat_update = false;
+    if (mousevec.x != 0.0f || mousevec.y != 0.0f) {
+        angleX += mousevec.y / 1000.0f;
+        angleZ += mousevec.x / 1000.0f;
+        const glm::mat4 rotate_x = glm::rotate(glm::identity<glm::mat4>(), angleX, glm::vec3{1.0f, 0.0f, 0.0f});
+        rotate = glm::rotate(rotate_x, angleZ, glm::vec3{0.0f, 1.0f, 0.0f});
+
+        mat_update = true;
+    }
+    if (glfwGetKey(parent.window, GLFW_KEY_W) == GLFW_PRESS) {
+        move({0.0f, 0.0f, 0.5f});
+        mat_update = true;
+    }
+
+    if (glfwGetKey(parent.window, GLFW_KEY_S) == GLFW_PRESS) {
+        move({0.0f, 0.0f, -0.5f});
+        mat_update = true;
+    }
+
+    if (glfwGetKey(parent.window, GLFW_KEY_A) == GLFW_PRESS) {
+        move({0.5f, 0.0f, 0.0f});
+        mat_update = true;
+    }
+
+    if (glfwGetKey(parent.window, GLFW_KEY_D) == GLFW_PRESS) {
+        move({-0.5f, 0.0f, 0.0f});
+        mat_update = true;
+    }
+
+    if (mat_update) {
+        glm::mat4 final =  scale * rotate * translate;
+        glUniformMatrix4fv(testProgram.transform.index, 1, GL_FALSE, glm::value_ptr(final));
+    }
 
     glDrawElements(GL_TRIANGLES, elem_count, GL_UNSIGNED_INT, nullptr);
 

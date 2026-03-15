@@ -17,6 +17,7 @@ public:
     Attribute uv = getAttribute("uv", 2);
     Uniform sampler = getUniform("tex_sampler");
     Uniform transform = getUniform("transform");
+    Uniform projection = getUniform("projection");
 
 };
 
