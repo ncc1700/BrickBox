@@ -105,13 +105,16 @@ void BlockModelLoader::loadElement(PreResolved &pre_resolved, const nlohmann::js
     const auto& faces = element["faces"];
 
     std::vector<BlockModel::Face> facesv;
+    facesv.reserve(6);
 
-    loadFace(pre_resolved, faces, "up", { point1, point2, point3, point4 });
+    loadFace(pre_resolved, faces, "up", { point2, point1, point4, point3 });
     loadFace(pre_resolved, faces, "down", { point5, point6, point7, point8 });
-    loadFace(pre_resolved, faces, "north", { point6, point2, point3, point7 });
-    loadFace(pre_resolved, faces, "south", { point5, point1, point4, point8 });
+    loadFace(pre_resolved, faces, "south", { point6, point2, point3, point7 });
+    loadFace(pre_resolved, faces, "north", { point8, point4, point1, point5 });
     loadFace(pre_resolved, faces, "west", { point5, point1, point2, point6 });
-    loadFace(pre_resolved, faces, "east", { point8, point4, point3, point7 });
+    loadFace(pre_resolved, faces, "east", { point7, point3, point4, point8  });
+
+    facesv.shrink_to_fit();
 }
 
 static BlockModel::PositionKey fromString(const std::string &str) {
