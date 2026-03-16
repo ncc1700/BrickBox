@@ -41,8 +41,7 @@ private:
     void resolveTextures(const Intermediate &intermediate, PreResolved& pre_resolved);
 
     void loadElement(PreResolved& pre_resolved, const nlohmann::json &elemen) const;
-    void loadFace(PreResolved &pre_resolved, const nlohmann::json &faces, const std::string &name,
-        std::tuple<const glm::vec3&,const glm::vec3&,const glm::vec3&,const glm::vec3&> points) const;
+    void loadFace(PreResolved &pre_resolved, const nlohmann::json &faces, const std::string &name, const std::array<glm::vec3, 4> &points) const;
 
     static void deserializePosition(const nlohmann::json &positionJson, BlockModel::DisplayPosition &display);
 };

@@ -52,8 +52,7 @@ static glm::mat4x4 setupRotate(const nlohmann::json &rotate) {
     return rotation;
 }
 
-void BlockModelLoader::loadFace(PreResolved &pre_resolved, const nlohmann::json &faces, const std::string &name,
-        std::tuple<const glm::vec3&,const glm::vec3&,const glm::vec3&,const glm::vec3&> points) const {
+void BlockModelLoader::loadFace(PreResolved &pre_resolved, const nlohmann::json &faces, const std::string &name, const std::array<glm::vec3, 4> &points) const {
     if (!faces.contains(name)) return;
     const nlohmann::json &facej = faces[name];
     const std::string &texture = facej["texture"];
@@ -68,6 +67,24 @@ void BlockModelLoader::loadFace(PreResolved &pre_resolved, const nlohmann::json 
     }
     uv /= glm::vec4(16);
 
+
+    std::array<unsigned char, 4> pointSwizzle = {0, 1, 2, 3};
+
+    if (facej.contains("rotation")) {
+        switch (const unsigned int rotation = facej["rotation"]) {
+            case 0: break;
+            case 90: pointSwizzle = {1, 2, 3, 0}; break;
+            case 180: {
+                std::swap(uv.y, uv.w);
+                std::swap(uv.x, uv.z);
+            } break;
+            case 270: pointSwizzle = {3, 0, 1, 2}; break;
+            default:
+                throw std::invalid_argument("Unknown UV rotation: " + std::to_string(rotation));
+        }
+    }
+
+
     const TextureRef texture_ref = resolveTexture(pre_resolved, texture);
     uv.x = texture_ref.x + (uv.x * texture_ref.width);
     uv.y = texture_ref.y + (uv.y * texture_ref.height);
@@ -78,7 +95,7 @@ void BlockModelLoader::loadFace(PreResolved &pre_resolved, const nlohmann::json 
     pre_resolved.faces.emplace_back(BlockModel::Face{
         .tex = texture_ref,
         .points = {
-            std::get<0>(points), std::get<1>(points), std::get<2>(points), std::get<3>(points)
+            points[pointSwizzle[0]], points[pointSwizzle[1]], points[pointSwizzle[2]], points[pointSwizzle[3]],
         },
         .uv = uv
     });
