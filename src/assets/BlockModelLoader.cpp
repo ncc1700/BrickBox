@@ -52,12 +52,13 @@ static glm::mat4x4 setupRotate(const nlohmann::json &rotate) {
     return rotation;
 }
 
-void BlockModelLoader::loadFace(PreResolved &pre_resolved, const nlohmann::json &faces, const std::string &name, const std::array<glm::vec3, 4> &points) const {
+void BlockModelLoader::loadFace(PreResolved &pre_resolved, const nlohmann::json &faces, const std::string &name,
+                                const std::array<glm::vec3, 4> &points, const glm::vec4& uv_default) const {
     if (!faces.contains(name)) return;
     const nlohmann::json &facej = faces[name];
     const std::string &texture = facej["texture"];
 
-    glm::vec4 uv(0, 0, 16, 16);
+    glm::vec4 uv(uv_default);
     if (facej.contains("uv")) {
         const auto& uvj = facej["uv"];
         uv.x = uvj[0];
@@ -119,17 +120,22 @@ void BlockModelLoader::loadElement(PreResolved &pre_resolved, const nlohmann::js
     const glm::vec3 point7 = xyz((el_transform * glm::vec4{tov.x, fromv.y, tov.z, 1.0f}));
     const glm::vec3 point8 = xyz((el_transform * glm::vec4{tov.x, fromv.y, fromv.z, 1.0f}));
 
+
+    const glm::vec4 def_uv_tb = {fromv.x, fromv.z, tov.x, tov.z};
+    const glm::vec4 def_uv_sn = {fromv.x, fromv.y, tov.x, tov.y};
+    const glm::vec4 def_uv_we = {fromv.x, fromv.y, tov.x, tov.y};
+
     const auto& faces = element["faces"];
 
     std::vector<BlockModel::Face> facesv;
     facesv.reserve(6);
 
-    loadFace(pre_resolved, faces, "up", { point2, point1, point4, point3 });
-    loadFace(pre_resolved, faces, "down", { point5, point6, point7, point8 });
-    loadFace(pre_resolved, faces, "south", { point6, point2, point3, point7 });
-    loadFace(pre_resolved, faces, "north", { point8, point4, point1, point5 });
-    loadFace(pre_resolved, faces, "west", { point5, point1, point2, point6 });
-    loadFace(pre_resolved, faces, "east", { point7, point3, point4, point8  });
+    loadFace(pre_resolved, faces, "up", { point2, point1, point4, point3 }, def_uv_tb);
+    loadFace(pre_resolved, faces, "down", { point5, point6, point7, point8 }, def_uv_tb);
+    loadFace(pre_resolved, faces, "south", { point6, point2, point3, point7 }, def_uv_sn);
+    loadFace(pre_resolved, faces, "north", { point8, point4, point1, point5 }, def_uv_sn);
+    loadFace(pre_resolved, faces, "west", { point5, point1, point2, point6 }, def_uv_we);
+    loadFace(pre_resolved, faces, "east", { point7, point3, point4, point8 }, def_uv_we);
 
     facesv.shrink_to_fit();
 }

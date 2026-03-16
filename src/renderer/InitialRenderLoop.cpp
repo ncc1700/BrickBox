@@ -30,7 +30,7 @@ InitialRenderLoop::InitialRenderLoop(Window& window) : AbstractRenderer(window),
 
 
     BlockModelLoader loader(assets.blockTextures);
-    BlockModel blockModel = loader.loadModel("minecraft:block/anvil");
+    BlockModel blockModel = loader.loadModel("minecraft:block/composter");
     std::cout << "Faces: " << blockModel.faces.size() << std::endl;
 
     const TextureRef& heavy_core = assets.blockTextures.at("minecraft:block/grass_block_side");
