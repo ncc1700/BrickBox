@@ -4,6 +4,7 @@
 #include <memory>
 #include <unordered_map>
 #include "../../Packet.h"
+#include <zlib.h>
 
 
 namespace Network {
@@ -34,6 +35,7 @@ namespace Network {
         callbacks[0x7E] = ServerPackets::stepTick;
         callbacks[0x5C] = ServerPackets::setCenterChunk;
         callbacks[0x2C] = ServerPackets::chunkDataAndUpdateLight;
+        callbacks[0x03] = ServerPackets::beginCompression;
     }   
 
     int8_t handleCallback(std::shared_ptr<Connection> con, std::shared_ptr<Packet> packet, int id){

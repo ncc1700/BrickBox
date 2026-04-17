@@ -1,5 +1,3 @@
-
-
 #include <atomic>
 #include <cstdio>
 #include <memory>

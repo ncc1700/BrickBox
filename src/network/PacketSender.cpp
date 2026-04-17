@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <memory>
 #include <queue>
+#include <sys/types.h>
 #include <thread>
 
 
@@ -30,6 +31,11 @@ namespace Network {
         this->packetQueue.push(packet);
         this->mutex.unlock();
     }
+
+    void PacketSender::setCompressionThreshold(int amount){
+        compressionThreshold = amount;
+    }
+    
     void PacketSender::startThread(){
         while(isRunning){
             this->mutex.lock();
@@ -39,11 +45,20 @@ namespace Network {
                 continue;
             }
             printf("sending a packet! (queue line: %ld)\n", this->packetQueue.size());
-            this->packetQueue.front()->sendPacket(this->con.get());
+            int vecSize = this->packetQueue.front()->vec.size();
+            if(compressionThreshold != -1){
+                printf("sending COMPRESSED packet\n");
+                this->packetQueue.front()->sendCompressedPacket(compressionThreshold, this->con.get());
+            } else {
+                printf("sending UNCOMPRESSED packet\n");
+                this->packetQueue.front()->sendPacket(this->con.get());
+            }
             this->packetQueue.pop();
             this->mutex.unlock();
         }
     }
+
+    // static functions
     void PacketSender::create(std::shared_ptr<Connection> con){
         singleTon = std::make_shared<PacketSender>(con);
     }
@@ -51,7 +66,12 @@ namespace Network {
     std::shared_ptr<PacketSender> PacketSender::getInstance() {
         return singleTon;
     }
+
     void PacketSender::send(std::shared_ptr<Packet> packet){
         PacketSender::getInstance().get()->sendPacket(packet);
+    }
+    
+    void PacketSender::setMaxSizeTillCompression(int amount){
+        PacketSender::getInstance().get()->setCompressionThreshold(amount);
     }
 }

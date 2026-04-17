@@ -10,6 +10,7 @@ namespace Network {
     namespace ServerPackets {
         int8_t loginSuccessCallback(std::shared_ptr<Connection> con, std::shared_ptr<Packet> packet);
         int8_t knownPacks(std::shared_ptr<Connection> con, std::shared_ptr<Packet> packet);
+        int8_t beginCompression(std::shared_ptr<Connection> con, std::shared_ptr<Packet> packet);
         int8_t changeDifficulty(std::shared_ptr<Connection> con, std::shared_ptr<Packet> packet);
         int8_t setHeldItem(std::shared_ptr<Connection> con, std::shared_ptr<Packet> packet);
         int8_t setTickingState(std::shared_ptr<Connection> con, std::shared_ptr<Packet> packet);

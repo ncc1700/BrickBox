@@ -23,15 +23,18 @@ namespace Network {
             std::thread newThread;
             std::mutex mutex;
             std::atomic_bool isRunning;
+            int compressionThreshold = -1;
             void startThread();
         public:
             //static std::shared_ptr<PacketSender> singleTon;
             PacketSender(std::shared_ptr<Connection> con);
             void sendPacket(std::shared_ptr<Packet>);
+            void setCompressionThreshold(int amount);
             ~PacketSender();
             static void create(std::shared_ptr<Connection> con); 
             static std::shared_ptr<PacketSender> getInstance(); 
             static void send(std::shared_ptr<Packet>);
+            static void setMaxSizeTillCompression(int amount);
     };
 
 }

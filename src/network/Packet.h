@@ -28,6 +28,7 @@ namespace Network {
             ssize_t receive(uint8_t* buf, size_t n);
             ssize_t send(const uint8_t* buf, size_t len);
             uint8_t sendPacket(Connection* connection);
+            uint8_t sendCompressedPacket(int threshold, Connection* connection);
     };
 }
 
