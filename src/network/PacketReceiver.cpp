@@ -38,10 +38,7 @@ namespace Network {
                 int pLengthWithData = con->readVarInt();
                 // decompress then send
                 unsigned long dLength = con->readVarInt();
-                // just to get dLengthSize
-                Packet testPacket;
-                testPacket.writeVarInt(dLength);
-                int dLengthSize = testPacket.vec.size();
+                int dLengthSize = Packet::sizeVarInt(dLength);
                 int pLength = pLengthWithData - dLengthSize;
                 printf("pLengthWithData: %d, pLength: %d, dLength: %lu, dLengthSize: %d\n", pLengthWithData, pLength, dLength, dLengthSize);
 

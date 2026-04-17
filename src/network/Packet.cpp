@@ -56,10 +56,9 @@ namespace Network {
     }
 
     uint8_t Packet::sendCompressedPacket(int threshold, Connection* connection){
-        Packet dummyPacket;
-        dummyPacket.writeVarInt(0);
+        int dLengthSize = Packet::sizeVarInt(0);
         Packet packetWeSend; 
-        packetWeSend.writeVarInt(this->vec.size() + dummyPacket.vec.size());
+        packetWeSend.writeVarInt(this->vec.size() + dLengthSize);
         packetWeSend.writeVarInt(0);
         
         packetWeSend.vec.insert(packetWeSend.vec.end(), this->vec.begin(), this->vec.end());

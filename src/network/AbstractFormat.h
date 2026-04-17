@@ -32,13 +32,14 @@ namespace Network {
             ssize_t writeDouble(double num);
             int readVarInt();
             int64_t readVarLong();
-            int sizeVarInt(int value);
             void writeVarInt(int value);
             void writeVarLong(int64_t value);;
             uint8_t* readBuffer();
             char* readCStr();
             std::string readString(); // <---- USE THIS, NOT READCSTR
             void writeString(std::string str, int maxLength);
+            static int sizeVarInt(int value);
+
     };
 }
 
