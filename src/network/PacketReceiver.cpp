@@ -70,7 +70,7 @@ namespace Network {
                     uncompress(packetToHandle.vec.data(), &dLength, packet.vec.data(), pLength);
                     int id = packetToHandle.readVarInt();
                     printf("we got a compressed packet! Id is 0x%x Size is %lu\n", id, dLength);
-                    //handleCallback(con, std::make_shared<Packet>(packetToHandle), id);
+                    handleCallback(con, std::make_shared<Packet>(packetToHandle), id);
                 }
             } else {
                 int packetSize = con->readVarInt();
