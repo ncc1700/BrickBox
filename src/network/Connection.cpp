@@ -42,8 +42,6 @@ namespace Network {
     }
 
     ssize_t Connection::receive(uint8_t* buf, size_t n){
-        // 0 is success
-        // -1 is we had an error receiving a packet
         int received = 0;
         uint8_t* ubuf = (uint8_t*)buf;
         while(received < n){
@@ -66,8 +64,6 @@ namespace Network {
     }   
 
     ssize_t Connection::send(const uint8_t* buf, size_t len){
-        // 0 is success
-        // -1 is we had an error sending a packet
         int sent = 0;
         uint8_t* ubuf = (uint8_t*)buf;
         while(sent < len){
