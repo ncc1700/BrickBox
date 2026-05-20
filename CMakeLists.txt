@@ -4,24 +4,12 @@ project(BrickBox)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
-
+include_directories(BrickBox bbnet/includes/)
 add_executable(BrickBox src/main.cpp
-                src/network/Connection.cpp
-                src/network/Packet.cpp
-                src/network/NetworkTools.cpp
-                src/network/PacketReceiver.cpp
-                src/network/PacketSender.cpp
-                src/network/protocol/1.21.11/Protocol.cpp
-                src/network/protocol/1.21.11/ProtCallbacks.cpp
-                src/network/protocol/1.21.11/client/CInitPackets.cpp
-                src/network/protocol/1.21.11/client/CConfigPackets.cpp
-                src/network/protocol/1.21.11/client/CSyncPackets.cpp
-                src/network/protocol/1.21.11/server/SInitPackets.cpp
-                src/network/protocol/1.21.11/server/SConfigPackets.cpp
-                src/network/protocol/1.21.11/server/SSyncPackets.cpp
-                src/network/protocol/1.21.11/server/SEventPackets.cpp
-                src/network/protocol/1.21.11/server/SMiscPackets.cpp
-    
-                src/network/AbstractFormat.cpp)
+                
+                bbnet/src/core/bytestream.c
+                bbnet/src/core/storage.c
+                bbnet/src/core/tools.c
+                bbnet/src/network/client/client.c)
 
-target_link_libraries(BrickBox z)
+target_link_libraries(BrickBox z uv)
