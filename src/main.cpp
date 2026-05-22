@@ -1,44 +1,50 @@
 #include <brickboxNet.h>
+#include <network/Packet.hpp>
+#include <network/MinecraftClient.hpp>
 
-bool example = true;
-
-void OnConnect(BrickBoxClient* client, void* connection, ConnectionResult result){
+void CallbackOnConnect(BrickBoxClient* clientData, void* connection, ConnectionResult result){
+    Network::MinecraftClient* client = (Network::MinecraftClient*)clientData->data;
     if(result == CONNECTION_SUCCESS){
+       
         DEBUG_INFO("SUCCESS!\n");
 
-        ByteStream stream1;
-        CreateByteStream(&stream1, 200);
-        WriteVarInt(&stream1, 0x00);
-        WriteVarInt(&stream1, 774);
-        WriteCStr(&stream1, "127.0.0.1", 255);
-        WriteU16(&stream1, 25565);
-        WriteVarInt(&stream1, 2);
-        WriteVarIntFront(&stream1, stream1.storage.used);
-        WriteDataToServer(client, stream1.storage.buffer, stream1.storage.used);
-        DestroyByteStream(&stream1);
-        
-        CreateByteStream(&stream1, 200);
-        WriteVarInt(&stream1, 0x00);
-        WriteCStr(&stream1, "BrickBox", 16);
-        WriteU64(&stream1, 0);
-        WriteU64(&stream1, 0);
-        WriteVarIntFront(&stream1, stream1.storage.used);
-        WriteDataToServer(client, stream1.storage.buffer, stream1.storage.used);
-        DestroyByteStream(&stream1);
+        Network::Packet packet1(1);
+        packet1.writeVarInt(0x00);
+        packet1.writeVarInt(774);
+        packet1.writeStr("127.0.0.1", 255);
+        packet1.writeU16(25565);
+        packet1.writeVarInt(2);
+        client->sendPacketToServer(&packet1);
+       
+        Network::Packet packet2(1);
+        packet2.writeVarInt(0x00);
+        packet2.writeStr("m", 16);
+        packet2.writeU64(0);
+        packet2.writeU64(0);
+        client->sendPacketToServer(&packet2);
     } else DEBUG_INFO("FAIL\n");
 }
 
-int main(){
-    BrickBoxClient client = {0};
-    CreateBrickBoxClientResult result = CreateBrickBoxClient(&client, "127.0.0.1", 25565);
-    if(result != CREATE_BB_CLIENT_SUCCESS){
-        DEBUG_FAIL("failed with code of %d\n", result);
+void CallbackOnRead(BrickBoxClient* clientData, bool readSuccess, const void* buffer, size_t size){
+    if(buffer == NULL) return;
+    Network::MinecraftClient* client = (Network::MinecraftClient*)clientData->data;
+    if(readSuccess == false){
+        DEBUG_FAIL("failed to fully read packet");
+        return;
     }
-    client.OnConnect = OnConnect;
-    StartBrickBoxClient(&client);
+    Network::Packet packet((uint8_t*)buffer, size, false);
+    //DEBUG_INFO("")
+    int sizeOfPacket = packet.readVarInt();
+    int id = packet.readVarInt();
+    DEBUG_INFO("id is 0x%x, size is %d\n", ((uint8_t*)buffer)[0], sizeOfPacket);
+}
 
-
-    DestroyBrickBoxClient(&client);
+int main(){
+    Network::MinecraftClient client("127.0.0.1", 25565);
+    client.registerCallback<OnConnect>(CallbackOnConnect);
+    client.registerCallback<OnRead>(CallbackOnRead);
+    client.start();
+   // while(1){continue;}
     return 0;
 }
 
