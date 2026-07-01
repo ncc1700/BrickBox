@@ -30,10 +30,10 @@ namespace Network {
             packet.writeU64(0);
             return packet;
         }
-        Packet acknowledgeLogin(){
-        }
-        Packet configSuccess(){
-        }
+        // Packet acknowledgeLogin(){
+        // }
+        // Packet configSuccess(){
+        // }
     }
 }
 
