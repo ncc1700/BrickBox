@@ -4,7 +4,7 @@
 
 
 BBStatus CoreCreateByteBuf(_OUT_ ByteBuf* buffer, _IN_ usize size){
-    buffer->data = FCALLOC(size, sizeof(u8));
+    buffer->data = BBCALLOC(size, sizeof(u8));
     if(buffer == NULL){
         DEBUG_FAIL("failure to allocate memory of size %ld\n", size * sizeof(u8));
         return BBSTATUS_OUT_OF_MEMORY;
@@ -16,7 +16,7 @@ BBStatus CoreCreateByteBuf(_OUT_ ByteBuf* buffer, _IN_ usize size){
 }
 
 BBStatus CoreDeleteByteBuf(_IN_ ByteBuf* buffer){
-    FFREE(buffer->data);
+    BBFREE(buffer->data);
     buffer->size = 0;
     buffer->readIndex = 0;
     buffer->writeIndex = 0;

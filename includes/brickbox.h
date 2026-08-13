@@ -20,9 +20,9 @@
 #define SEGMENT_BIT 0x7F
 #define CONTINUE_BIT 0x80
 
-#define FCALLOC(amount, size) calloc(amount, size)
-#define FMALLOC(amount) malloc(amount)
-#define FFREE(address) free(address)
+#define BBCALLOC(amount, size) calloc(amount, size)
+#define BBMALLOC(amount) malloc(amount)
+#define BBFREE(address) free(address)
 
 #define DEBUG_FAIL(message, ...) printf("\e[0;31m[-]\e[0;37m %s:%d: " message, __FILE__, __LINE__, ##__VA_ARGS__)
 #define DEBUG_PASS(message, ...) printf("\e[0;32m[+]\e[0;37m %s:%d: " message, __FILE__, __LINE__, ##__VA_ARGS__)
