@@ -1,0 +1,91 @@
+#include <net/net.h>
+#include <zlib.h>
+
+
+
+
+static boolean compressionEnabled = FALSE;
+static u32 compressionLimit = 0;
+
+
+
+
+void NetEnableCompression(){
+    compressionEnabled = TRUE;
+}
+
+void NetDisableCompression(){
+    compressionEnabled = FALSE;
+}
+
+boolean NetIsCompressionEnabled(){
+    return compressionEnabled;
+}
+
+void NetSetCompressionLimit(_IN_ u32 limit){
+    compressionLimit = limit;
+}
+
+u32 NetReturnCompressionLimit(){
+    return compressionLimit;
+}
+
+
+BBStatus NetSetupPacket(_IN_ usize size, _OUT_ ByteBuf* packet){
+    if(compressionEnabled == FALSE){
+        BBStatus status = CoreCreateByteBuf(packet, size + CoreGetSizeOfVarInt(size));
+        if(status != BBSTATUS_SUCCESS){
+            return status;
+        }
+
+        status = CoreWriteVarInt(packet, size);
+        if(status != BBSTATUS_SUCCESS) {
+            CoreDeleteByteBuf(packet);
+            return BBSTATUS_CANT_WRITE_INTO_BYTEBUF;
+        }
+    } else {
+        size += CoreGetSizeOfVarInt(0x0);
+        BBStatus status = CoreCreateByteBuf(packet, size + CoreGetSizeOfVarInt(size));
+        if(status != BBSTATUS_SUCCESS){
+            return status;
+        }
+        status = CoreWriteVarInt(packet, size);
+        if(status != BBSTATUS_SUCCESS) {
+            CoreDeleteByteBuf(packet);
+            return BBSTATUS_CANT_WRITE_INTO_BYTEBUF;
+        }
+        status = CoreWriteVarInt(packet, 0x00);
+        if(status != BBSTATUS_SUCCESS) {
+            CoreDeleteByteBuf(packet);
+            return BBSTATUS_CANT_WRITE_INTO_BYTEBUF;
+        }
+    }
+    return BBSTATUS_SUCCESS;
+}
+
+BBStatus NetDecompressPacket(_IN_ ByteBuf* iPacket, _IN_ usize pSize, _IN_ usize dSize, _OUT_ ByteBuf* rPacket){
+    BBStatus status = CoreCreateByteBuf(rPacket, dSize);
+    if(status != BBSTATUS_SUCCESS){
+        return status;
+    }
+    int zResult = uncompress(rPacket->data, &dSize, iPacket->data, pSize);
+    if(zResult != Z_OK){
+        switch(zResult){
+            case Z_BUF_ERROR:{
+                DEBUG_FAIL("Buffer not large enough\n");
+                break;
+            }
+            case Z_MEM_ERROR:{
+                DEBUG_FAIL("Out of memory\n");
+                break;
+            }
+            case Z_DATA_ERROR:{
+                DEBUG_FAIL("Data was corrupted\n");
+                break;
+            }
+        }
+        CoreDeleteByteBuf(rPacket);
+        return BBSTATUS_CANT_DECOMPRESS_PACKET;
+    }
+    return BBSTATUS_SUCCESS;
+}

@@ -1,14 +1,8 @@
 
 @echo off
 
-SET "bbnet_dir=bbnet"
 SET "build_dir=build"
 SET "source_dir=."
-
-
-if EXIST "%bbnet_dir%\" (
-    rd "%bbnet_dir%" /s /q
-)
 
 if EXIST "%build_dir%\" (
     rd "%build_dir%" /s /q
